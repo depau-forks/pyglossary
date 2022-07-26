@@ -155,7 +155,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	GROUP_XHTML_WORD_DEFINITION_TEMPLATE = """<idx:entry \
 scriptable="yes"{spellcheck_str}>
-<idx:orth{headword_hide}>{headword_html}{infl}
+<idx:orth{value_headword}>{headword_visible}{infl}
 </idx:orth>
 <br/>{definition}
 </idx:entry>
@@ -217,13 +217,16 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 
 	def format_group_content(self, word: "List[str]", defi: str) -> str:
 		hide_word_index = self._hide_word_index
-		html_headword = None
 		if word[0][:9] == "HTML_HEAD":
-			html_headword = word[0][9:]
+			headword_visible =  "\n" + word[0][9:]
 			word.pop(0)
-	
-		if hide_word_index:
-			html_headword = ''
+			value_headword = f' value="{word[0]}"'
+		elif hide_word_index:
+			headword_visible = ''
+			value_headword = f' value="{headword}"'
+		else:
+			headword_visible = "\n" + self._glos.wordTitleStr(headword)
+			value_headword = ""
 		if len(word) == 1:
 			infl = ''
 			mainword = word[0]
@@ -245,8 +248,8 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 	
 		group_content = self.GROUP_XHTML_WORD_DEFINITION_TEMPLATE.format(
 			spellcheck_str=' spell="yes"' if self._spellcheck else '',
-			headword_html=f'\n{headword}' if html_headword == None else f'\n{html_headword}',
-			headword_hide=f' value="{headword}"' if not html_headword == None else '',
+			headword_visible= headword_visible,
+			value_headword=value_headword,
 			definition=defi,
 			infl=infl,
 		)
