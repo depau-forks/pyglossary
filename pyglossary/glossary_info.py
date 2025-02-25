@@ -195,7 +195,7 @@ class GlossaryInfo(object):
 		langNames = []
 
 		def checkPart(part: str):
-			for match in re.findall("\w\w\w*", part):
+			for match in re.findall(r"\w\w\w*", part):
 				# print(f"match = {match!r}")
 				lang = langDict[match]
 				if lang is None:
